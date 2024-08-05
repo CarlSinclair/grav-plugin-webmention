@@ -1,6 +1,7 @@
 <?php
 namespace Grav\Plugin\Console;
 
+use Grav\Common\Grav;
 use Grav\Console\ConsoleCommand;
 use Grav\Common\Page\Pages;
 use Symfony\Component\Console\Input\InputArgument;
@@ -55,6 +56,18 @@ class NotifyCommand extends ConsoleCommand
      */
     protected function serve()
     {
+        // Bootstrap Grav
+        $grav = Grav::instance();
+        $grav['uri']->init();
+        $grav['config']->init();
+        $grav['plugins']->init();
+
+        // Get the Webmention plugin instance from the container
+        $webmentionPlugin = $grav['plugins']->get('webmention');
+        $pluginConfig = $grav['config']->get('plugins.webmention');
+        $datadir = $pluginConfig['datadir'];
+        $datafile = $pluginConfig['receiver']['file_data']; 
+
         // Collects the arguments and options as defined
         $this->options = [
             'old' => $this->input->getOption('old'),
@@ -65,11 +78,7 @@ class NotifyCommand extends ConsoleCommand
             $this->options['auto'] = true;
         }
 
-        $config = $this->getgrav()['config'];
-        $datadir = $config->get('plugins.webmention.datadir');
-        $datafile = $config->get('plugins.webmention.sender.file_data');
         $root = DATA_DIR . $datadir . '/';
-
         $filename = $root . $datafile;
         $datafh = File::instance($filename);
         $datafh->lock(); // Apparently this will create a nonexistent file, too.
@@ -220,7 +229,7 @@ class NotifyCommand extends ConsoleCommand
 
     private function notify($data) {
         if ($data !== null) {
-            $config = $this->getgrav()['config'];
+            $config = $this->grav['config'];
             $client = new \IndieWeb\MentionClient();
 
             // If `vouch` is enabled, load the map file
