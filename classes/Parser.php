@@ -27,7 +27,7 @@ use stdClass;
  * Produces:
  *
  *     {
- *      "items": [
+ *      "item": [
  *       {
  *        "type": ["h-card"],
  *        "properties": {
@@ -363,11 +363,11 @@ class Parser {
 
 	public function textContent(DOMElement $el) {
 		$excludeTags = array('noframe', 'noscript', 'script', 'style', 'frames', 'frameset');
-		
+
 		if (isset($el->tagName) and in_array(strtolower($el->tagName), $excludeTags)) {
 			return '';
 		}
-		
+
 		$this->resolveChildUrls($el);
 
 		$clonedEl = $el->cloneNode(true);
@@ -376,7 +376,7 @@ class Parser {
 			$newNode = $this->doc->createTextNode($imgEl->getAttribute($imgEl->hasAttribute('alt') ? 'alt' : 'src'));
 			$imgEl->parentNode->replaceChild($newNode, $imgEl);
 		}
-		
+
 		foreach ($excludeTags as $tagName) {
 			foreach ($this->xpath->query(".//{$tagName}", $clonedEl) as $elToRemove) {
 				$elToRemove->parentNode->removeChild($elToRemove);
@@ -403,10 +403,10 @@ class Parser {
 			'tfoot', 'th', 'thead', 'tr', 'td', 'ul', 'ol', 'dl', 'details');
 
 		$excludeTags = array('noframe', 'noscript', 'script', 'style', 'frames', 'frameset');
-		
+
 		// PHP DOMDocument doesn’t correctly handle whitespace around elements it doesn’t recognise.
 		$unsupportedTags = array('data');
-		
+
 		if (isset($el->tagName)) {
 			if (in_array(strtolower($el->tagName), $excludeTags)) {
 				return $out;
@@ -527,7 +527,7 @@ class Parser {
 		}
 
 		$this->resolveChildUrls($p);
-		
+
 		if ($p->tagName == 'img' and $p->getAttribute('alt') !== '') {
 			$pValue = $p->getAttribute('alt');
 		} elseif ($p->tagName == 'area' and $p->getAttribute('alt') !== '') {
@@ -791,7 +791,7 @@ class Parser {
 			// If result was already parsed, skip it
 			if (null === $result)
 				continue;
-			
+
 			// In most cases, the value attribute of the nested microformat should be the p- parsed value of the elemnt.
 			// The only times this is different is when the microformat is nested under certain prefixes, which are handled below.
 			$result['value'] = $this->parseP($subMF);
@@ -1121,7 +1121,7 @@ class Parser {
 		list($rels, $alternates) = $this->parseRelsAndAlternates();
 
 		$top = array(
-			'items' => array_values(array_filter($mfs)),
+			'item' => array_values(array_filter($mfs)),
 			'rels' => $rels
 		);
 
@@ -1150,7 +1150,7 @@ class Parser {
 		$matches = $this->xpath->query("//*[@id='{$id}']");
 
 		if (empty($matches))
-			return array('items' => array(), 'rels' => array(), 'alternates' => array());
+			return array('item' => array(), 'rels' => array(), 'alternates' => array());
 
 		return $this->parse($convertClassic, $matches->item(0));
 	}
