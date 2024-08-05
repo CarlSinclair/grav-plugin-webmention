@@ -1,24 +1,27 @@
-# Webmention Plugin
+# <sup>Better</sup>Webmention Plugin
 
-***Abandonment Notice:** I'm afraid I simply don't have the time to maintain my Grav themes and plugins. Those interested in taking over should refer to the ["Abandoned Resource Protocol"](https://learn.getgrav.org/17/advanced/grav-development#abandoned-resource-protoc). Feel free to fork and replace. So long, and thanks for all the fish.*
+TODO:
+- [x] Fix compatibility with modern versions of PHP and Grav.
+- [x] Add multilingual support.
+- [x] Add Telegram webhook functionality to get notified of new webmentions (currently requires hardcoded bot token and Chat ID).
+      **Comment out if not desirable**.
+- [x] Refactor autosending of webmentions to improve performance by only triggering it when pages are modified in the admin backend.
+- [x] Add page header caching of extracted links on each page to ensure cached links aren't unnecessarily re-processed on every save.
+- [X] Anchor links and internal links are automatically skipped.
+- [ ] Make Telegram webhook configurable in the config file and through the admin backend.
+- [ ] Re-instate the status page (I removed it because I couldn't fix it).
+- [ ] Code clean up.
 
-The **Webmention** Plugin is for [Grav CMS](http://github.com/getgrav/grav). It implements the [Webmention protocol](https://www.w3.org/TR/webmention/) with [the Vouch extension](https://indieweb.org/Vouch).
+---
+The **<sup>Better</sup>Webmention** Plugin is for [Grav CMS](http://github.com/getgrav/grav). It implements the [Webmention protocol](https://www.w3.org/TR/webmention/) with [the Vouch extension](https://indieweb.org/Vouch).
 
-This plugin is in a beta state. It *does* work, but it has not been extensively tested. It's a young spec and adoption is limited. I encourage people to install it and use it and provide feedback and pull requests. The only way specs like this get adopted is by people using it. Go to.
+This plugin is in a beta state. It ~~*does* work~~ works perfectly, but it has not been extensively tested. It's a young spec and adoption is limited. I encourage people to install it and use it and provide feedback and pull requests. The only way specs like this improve is by people using it. 
 
-An [implementation report](https://github.com/w3c/webmention/tree/master/implementation-reports) has been submitted.
+~~An [implementation report](https://github.com/w3c/webmention/tree/master/implementation-reports) has been submitted.~~
 
 ## Installation
 
-Installing the Webmention plugin can be done in one of two ways. The GPM (Grav Package Manager) installation method enables you to quickly and easily install the plugin with a simple terminal command, while the manual method enables you to do so via a zip file.
-
-### GPM Installation (Preferred)
-
-The simplest way to install this plugin is via the [Grav Package Manager (GPM)](http://learn.getgrav.org/advanced/grav-gpm) through your system's terminal (also called the command line).  From the root of your Grav install type:
-
-    bin/gpm install webmention
-
-This will install the Webmention plugin into your `/user/plugins` directory within Grav. Its files can be found under `/your/site/grav/user/plugins/webmention`.
+Installing the Webmention plugin can be done in one way. The manual method enables you to install it via a zip file.
 
 ### Manual Installation
 
@@ -95,7 +98,7 @@ vouch:
 
     - The `page_only` field determines what output will actually be scanned for links. If `true`, the scan will happen after the `onPageContentProcessed` event and will only scan the page content for links. If set to `false`, the scan happens after the `onOutputGenerated` event, which will scan the entire content of the &lt;body&gt; tag (for blog set ups, that will include the sidebars, footers, etc.).
 
-    - If `automatic` is set to `true`, then after the page has been scanned and links found, mentions will be sent immediately, before rendering. If the page is link heavy, this *will* slow down the site. **Don't do this unless you really mean it!**
+    - If `automatic` is set to `true`, then after the page has been scanned and links found, mentions will be sent immediately, before rendering. ~~If the page is link heavy, this *will* slow down the site. **Don't do this unless you really mean it!**~~
 
       If set to `false`, notification will only be sent when triggered by the CLI.
 
@@ -166,7 +169,7 @@ Also, this plugin does not display any data itself. It will make data available 
 
 If enabled, the system will scan pages on a cache miss and collect any external links into the data file. You would then use the CLI (described below) to actually notify those links.
 
-There *is* a `sender.automatic` feature that will try to send notifications right away, but this will definitely slow down the page rendering. You would only want to do this if you were [precaching pages](https://github.com/getgrav/grav-plugin-precache) or had some other specific use case.
+There *is* a `sender.automatic` feature that will try to send notifications right away ~~,but this will definitely slow down the page rendering. You would only want to do this if you were [precaching pages](https://github.com/getgrav/grav-plugin-precache) or had some other specific use case~~.
 
 Ideally there would be a CLI scanner, but the Grav CLI system doesn't appear to have access to page routes.
 
