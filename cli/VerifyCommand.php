@@ -1,6 +1,7 @@
 <?php
 namespace Grav\Plugin\Console;
 
+use Grav\Common\Grav;
 use Grav\Console\ConsoleCommand;
 use Grav\Common\Page\Pages;
 use Symfony\Component\Console\Input\InputArgument;
@@ -8,6 +9,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use RocketTheme\Toolbox\File\File;
 use Symfony\Component\Yaml\Yaml;
+use Grav\Common\Plugin;
 use Grav\Plugin\WebmentionPlugin;
 //require_once __DIR__ . '/../classes/MentionClient.php';
 require_once __DIR__ . '/../classes/Parser.php';
@@ -56,6 +58,19 @@ class VerifyCommand extends ConsoleCommand
      */
     protected function serve()
     {
+
+        // Bootstrap Grav
+        $grav = Grav::instance();
+        $grav['uri']->init();
+        $grav['config']->init();
+        $grav['plugins']->init();
+
+        // Get the Webmention plugin instance from the container
+        $webmentionPlugin = $grav['plugins']->get('webmention');
+	$pluginConfig = $grav['config']->get('plugins.webmention');
+        $datadir = $pluginConfig['datadir'];
+        $datafile = $pluginConfig['receiver']['file_data'];
+
         // Collects the arguments and options as defined
         $this->options = [
             'old' => $this->input->getOption('old'),
@@ -66,16 +81,11 @@ class VerifyCommand extends ConsoleCommand
             $this->options['auto'] = true;
         }
 
-        $config = $this->getgrav()['config'];
-        $datadir = $config->get('plugins.webmention.datadir');
-        $datafile = $config->get('plugins.webmention.receiver.file_data');
         $root = DATA_DIR . $datadir . '/';
-
         $filename = $root . $datafile;
         $datafh = File::instance($filename);
         $datafh->lock(); // Apparently this will create a nonexistent file, too.
         $data = Yaml::parse($datafh->content());
-
         // Get counts and notify in batches
         //   Total unnotified
         $count = $this->count_unverified($data);
@@ -215,7 +225,7 @@ class VerifyCommand extends ConsoleCommand
 
     private function verify($data) {
         if ($data !== null) {
-            $config = $this->getgrav()['config'];
+            $config = $this->grav['config'];
 
             //Iterate and verify
             foreach ($data as $slug => &$pagedata) {
@@ -269,6 +279,9 @@ class VerifyCommand extends ConsoleCommand
                             $vouchvalid = false;
                             $vouchwhite = false;
                             $vouchblack = false;
+    // Re-fetch the configuration
+    $grav = Grav::instance();
+    $config = $grav['config'];
                             if ($config->get('plugins.webmention.vouch.enabled')) {
                                 $vouchrequired = $config->get('plugins.webmention.vouch.required');
                                 $autoapprove = $config->get('plugins.webmention.vouch.auto_approve');
