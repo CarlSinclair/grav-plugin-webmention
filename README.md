@@ -10,6 +10,7 @@ TODO:
 - [X] Anchor links and internal links are automatically skipped.
 - [ ] Make Telegram webhook configurable in the config file and through the admin backend.
 - [ ] Re-instate the status page (I removed it because I couldn't fix it).
+- [ ] Translate admin backend page.
 - [ ] Code clean up.
 
 ---
