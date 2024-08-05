@@ -1,1 +1,9 @@
-{% set payload = {mentioner: config.plugins.webmention._msg.mentioner, mentionee: config.plugins.webmention._msg.mentionee, date_received: date(config.plugins.webmention._msg.date_received), valid: config.plugins.webmention._msg.valid, approved: config.plugins.webmention._msg.approved} %}{{ payload|json_encode|raw }}
+{% set mention = page.header.webmention %}
+{% set payload = {
+    mentioner: mention.mentioner,
+    mentionee: mention.mentionee,
+    date_received: mention.date_received|date('Y-m-d H:i:s'),
+    valid: mention.valid,
+    approved: mention.approved
+} %}
+{{ payload|json_encode|raw }}
